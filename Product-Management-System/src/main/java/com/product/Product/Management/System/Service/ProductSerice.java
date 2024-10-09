@@ -15,4 +15,6 @@ public interface ProductSerice {
     public ResponseEntity<String> updateProduct(Map<String, String> requestMap);
 
     public ResponseEntity<String> deleteProduct(int productId);
+
+    public ResponseEntity<Product> getProduct(int productId);
 }

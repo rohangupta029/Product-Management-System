@@ -23,5 +23,8 @@ public interface ProductRest {
     @DeleteMapping(path = "/deleteProduct/{productId}")
     public ResponseEntity<String> deleteProduct(@PathVariable int productId);
 
+    @GetMapping(path = "/getProduct/{productId}")
+    public ResponseEntity<Product> getProduct(@PathVariable int productId);
+
 
 }

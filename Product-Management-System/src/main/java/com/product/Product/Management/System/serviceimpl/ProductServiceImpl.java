@@ -8,10 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ProductServiceImpl implements ProductSerice {
@@ -82,8 +79,14 @@ public class ProductServiceImpl implements ProductSerice {
     public ResponseEntity<String> deleteProduct(int productId) {
         try {
             if (productId >= 0) {
-                productDAO.deleteById(productId);
-                return new ResponseEntity<String>("{\"message\":\"" + "Product deleted successfully" + "\"}", HttpStatus.OK);
+                Optional optional= productDAO.findById(productId);
+                if (!optional.isEmpty()){
+                    productDAO.deleteById(productId);
+                    return new ResponseEntity<String>("{\"message\":\"" + "Product deleted successfully" + "\"}", HttpStatus.OK);
+                }
+                else {
+                    return new ResponseEntity<String>("{\"message\":\"" + "Product ID is not valid" + "\"}", HttpStatus.BAD_REQUEST);
+                }
 
             } else {
                 return new ResponseEntity<String>("{\"message\":\"" + "Product ID is not valid" + "\"}", HttpStatus.BAD_REQUEST);
@@ -95,6 +98,20 @@ public class ProductServiceImpl implements ProductSerice {
         }
 
         return new ResponseEntity<String>("{\"message\":\"" + "Something went wrong." + "\"}", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<Product> getProduct(int productId) {
+        try {
+            Optional<Product> optional= productDAO.findById(productId);
+            if (!optional.isEmpty())
+                return new ResponseEntity<Product>(productDAO.getReferenceById(productId), HttpStatus.OK);
+            else
+                return new ResponseEntity<Product>(new Product(), HttpStatus.BAD_REQUEST);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return new ResponseEntity<Product>(new Product(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private boolean validateNewProduct(Map<String, String> requestMap, boolean validateId) {
